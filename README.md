@@ -1,4 +1,3 @@
-# sbrc24-minicurso-smartnic
 SBRC 2024 Minicurso -- SmartNICs: The Next Leap in Networking
 
-To be added. 
+This tutorial is part of the short course on SmartNICs presented at SBRC 2024. 
