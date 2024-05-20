@@ -44,9 +44,25 @@ To configure SFs, we run the following command. Note that we need to specify the
 To deploy SFs, we need to bind them to the mlx5 driver. Before, we need to get the *auxiliary device name* (something like mlx5_core.sf.4). For that, run `mlnx-sf -a show` and look for the SF just created (either by the SF Index or by SF representator netdev). Then execute the following (replacing the *auxiliary device name*)
 
 `echo mlx5_core.sf.4  > /sys/bus/auxiliary/drivers/mlx5_core.sf_cfg/unbind`
+
 `echo mlx5_core.sf.4  > /sys/bus/auxiliary/drivers/mlx5_core.sf/bind`
+
 `echo mlx5_core.sf.5  > /sys/bus/auxiliary/drivers/mlx5_core.sf_cfg/unbind`
+
 `echo mlx5_core.sf.5  > /sys/bus/auxiliary/drivers/mlx5_core.sf/bind`
 
-Run `mlnx-sf -a show` and you will see that everything now is configured. 
+Run `mlnx-sf -a show` and `devlink dev show` and you will see that everything now is configured. 
+
+### Network Traffic Steering
+
+Traffic steering is done by the eSwitch in the BlueField. If we want to make sure that network traffic reaches an SF, we first need to connect the SFs' interfaces to the OVS bridges. This will enable communication between SFs, physical interfaces, and the host interface representators.
+
+Add the SF  representator netdev to the OVS bridge. Important: check the representator netdev name by running `mlnx-sf -a show`. Ensure to connect SF to the same bridge that interconnect the physical port that SF is attached to.
+
+`ovs-vsctl add-port ovsbr1 en3f1pf1sf0`
+`ovs-vsctl add-port ovsbr1 en3f1pf1sf10` 
+
+To verify, run: 
+
+`ovs-vsctl show` 
 
