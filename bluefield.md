@@ -29,9 +29,9 @@ Next, we will create, configure and deploy two Scalable Functions. SFs need to b
 
 To create a new SF, we need to attach it to a physical port (either pci/0000:03:00.0 or pci/0000:03:00.1). Then, we should defined an id to SF (sfnum). 
 
-/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.0 flavour pcisf pfnum 0 sfnum 1
-/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.1 flavour pcisf pfnum 1 sfnum 1
-/opt/mellanox/iproute2/sbin/mlxdevm port show
+`/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.0 flavour pcisf pfnum 0 sfnum 1`
+`/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.1 flavour pcisf pfnum 1 sfnum 1`
+`/opt/mellanox/iproute2/sbin/mlxdevm port show` 
 
 
 #configure sf
