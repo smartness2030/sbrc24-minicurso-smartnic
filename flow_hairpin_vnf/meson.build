@@ -11,12 +11,12 @@
 #
 
 project('DOCA_SAMPLE', 'C', 'CPP',
-	# Get version number from file.
-	version: run_command(find_program('cat'),
-		files('/opt/mellanox/doca/applications/VERSION'), check: true).stdout().strip(),
-	license: 'Proprietary',
-	default_options: ['buildtype=debug'],
-	meson_version: '>= 0.61.2'
+        # Get version number from file.
+        version: run_command(find_program('cat'),
+                files('/opt/mellanox/doca/applications/VERSION'), check: true).stdout().strip(),
+        license: 'Proprietary',
+        default_options: ['buildtype=debug'],
+        meson_version: '>= 0.61.2'
 )
 
 SAMPLE_NAME = 'flow_hairpin_vnf'
@@ -35,24 +35,24 @@ sample_dependencies += dependency('doca-argp')
 sample_dependencies += dependency('libdpdk')
 
 sample_srcs = [
-	# The sample itself
-	SAMPLE_NAME + '_sample.c',
-	# Main function for the sample's executable
-	SAMPLE_NAME + '_main.c',
-	# Common code for the DOCA library samples
-	'../flow_common.c',
-	# Common code for all DOCA applications
-	'../../../applications/common/dpdk_utils.c',
+        # The sample itself
+        SAMPLE_NAME + '_sample.c',
+        # Main function for the sample's executable
+        SAMPLE_NAME + '_main.c',
+        # Common code for the DOCA library samples
+        '/opt/mellanox/doca/samples/common.c',
+        # Common code for all DOCA applications
+        '/opt/mellanox/doca/applications/common/dpdk_utils.c',
 ]
 
 sample_inc_dirs  = []
 # Common DOCA library logic
-sample_inc_dirs += include_directories('..')
+sample_inc_dirs += include_directories('/opt/mellanox/doca/samples/')
 # Common DOCA logic (applications)
-sample_inc_dirs += include_directories('../../../applications/common/')
+sample_inc_dirs += include_directories('/opt/mellanox/doca/applications/common/')
 
 executable('doca_' + SAMPLE_NAME, sample_srcs,
-	c_args : '-Wno-missing-braces',
-	dependencies : sample_dependencies,
-	include_directories: sample_inc_dirs,
-	install: false)
+        c_args : '-Wno-missing-braces',
+        dependencies : sample_dependencies,
+        include_directories: sample_inc_dirs,
+        install: false)
