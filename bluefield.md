@@ -83,3 +83,11 @@ To verify flow entries:
 
 `ovs-ofctl dump-flows ovsbr2`
 
+### Testing connectivity
+
+## Step 2: Programming the SmartNIC with DOCA
+
+We will now go over a simple DOCA application that is based on the DOCA Flow library. Our environment is now set up for the DOCA application.
+- **Goal**: understanding in a high-level of the code so that we can deploy and debug it with ease.
+
+
