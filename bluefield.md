@@ -90,4 +90,9 @@ To verify flow entries:
 We will now go over a simple DOCA application that is based on the DOCA Flow library. Our environment is now set up for the DOCA application.
 - **Goal**: understanding in a high-level of the code so that we can deploy and debug it with ease.
 
+First, export the DOCA lib path:
+
+`export PKG_CONFIG_PATH=:/opt/mellanox/doca/lib/aarch64-linux-gnu/pkgconfig:/opt/mellanox/dpdk/lib/aarch64-linux-gnu/pkgconfig:/opt/mellanox/flexio/lib/pkgconfig`
+
+`git `
 
