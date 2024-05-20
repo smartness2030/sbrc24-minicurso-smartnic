@@ -60,6 +60,7 @@ Traffic steering is done by the eSwitch in the BlueField. If we want to make sur
 Add the SF  representator netdev to the OVS bridge. Important: check the representator netdev name by running `mlnx-sf -a show`. Ensure to connect SF to the same bridge that interconnect the physical port that SF is attached to.
 
 `ovs-vsctl add-port ovsbr1 en3f1pf1sf0`
+
 `ovs-vsctl add-port ovsbr1 en3f1pf1sf10` 
 
 To verify, run: 
