@@ -41,10 +41,12 @@ To configure SFs, we run the following command. Note that we need to specify the
 
 `/opt/mellanox/iproute2/sbin/mlxdevm port function set pci/0000:03:00.0/229409 hw_addr 00:00:00:00:00:02 trust on state active`
 
-#deploy sf
-#ls /sys/bus/auxiliary/devices/mlx5_core.sf.*
-echo mlx5_core.sf.4  > /sys/bus/auxiliary/drivers/mlx5_core.sf_cfg/unbind
-echo mlx5_core.sf.4  > /sys/bus/auxiliary/drivers/mlx5_core.sf/bind
-echo mlx5_core.sf.5  > /sys/bus/auxiliary/drivers/mlx5_core.sf_cfg/unbind
-echo mlx5_core.sf.5  > /sys/bus/auxiliary/drivers/mlx5_core.sf/bind
+To deploy SFs, we need to bind them to the mlx5 driver. Before, we need to get the *auxiliary device name* (something like mlx5_core.sf.4). For that, run `mlnx-sf -a show` and look for the SF just created (either by the SF Index or by SF representator netdev). Then execute the following (replacing the *auxiliary device name*)
+
+`echo mlx5_core.sf.4  > /sys/bus/auxiliary/drivers/mlx5_core.sf_cfg/unbind`
+`echo mlx5_core.sf.4  > /sys/bus/auxiliary/drivers/mlx5_core.sf/bind`
+`echo mlx5_core.sf.5  > /sys/bus/auxiliary/drivers/mlx5_core.sf_cfg/unbind`
+`echo mlx5_core.sf.5  > /sys/bus/auxiliary/drivers/mlx5_core.sf/bind`
+
+Run `mlnx-sf -a show` and you will see that everything now is configured. 
 
