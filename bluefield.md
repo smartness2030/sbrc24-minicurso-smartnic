@@ -87,6 +87,15 @@ To verify flow entries:
 
 ### Testing connectivity
 
+- Gateway: IP 200.132.136.81 (usr: sbrc24, psw: sbrc2024@niteroi)
+- Traffic Generator: IP 10.10.10.30 (usr: sbrc24, psw: sbrc2024@niteroi)
+
+- Set up IP in for interfaces in the Traffic Generator (enp7s0f0 and enp7s0f1). For instance: enp7s0f0 40.40.40.2/24
+- Set up an IP to SFs in the same subnet and ping them from the traffic generator. **Important:** set up ip to the SF netdev representator (`mlnx-sf -a show`)
+ 
+
+
+
 ## Step 2: Programming the SmartNIC with DOCA
 
 We will now go over a simple DOCA application that is based on the DOCA Flow library. Our environment is now set up for the DOCA application.
