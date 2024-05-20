@@ -30,7 +30,9 @@ Next, we will create, configure and deploy two Scalable Functions. SFs need to b
 To create a new SF, we need to attach it to a physical port (either pci/0000:03:00.0 or pci/0000:03:00.1). Then, we should defined an id to SF (sfnum) -- in the example below, we set sfnum to 10. **IMPORTANT**: please ensure to select a different sfnum than other atendees (we are using the same BlueField card here)
 
 `/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.0 flavour pcisf pfnum 0 sfnum 10`
+
 `/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.1 flavour pcisf pfnum 1 sfnum 10`
+
 `/opt/mellanox/iproute2/sbin/mlxdevm port show` 
 
 At this point, running the coomand below, you should see the new added SFs. A SF has netdev representator en3f1pf1sf10 and en3f0pf0sf10.  
