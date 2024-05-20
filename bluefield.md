@@ -90,9 +90,27 @@ To verify flow entries:
 We will now go over a simple DOCA application that is based on the DOCA Flow library. Our environment is now set up for the DOCA application.
 - **Goal**: understanding in a high-level of the code so that we can deploy and debug it with ease.
 
+### Understanding the compilation and executions steps
+
 First, export the DOCA lib path:
 
 `export PKG_CONFIG_PATH=:/opt/mellanox/doca/lib/aarch64-linux-gnu/pkgconfig:/opt/mellanox/dpdk/lib/aarch64-linux-gnu/pkgconfig:/opt/mellanox/flexio/lib/pkgconfig`
 
-`git `
+Clone this repository with the sample DOCA code. 
+
+`git clone https://github.com/smartness2030/sbrc24-minicurso-smartnic.git`
+
+Access directory flow_hairping_vnf code. 
+
+To compile, 
+
+`meson build`
+
+`cd build`
+
+`ninja`
+
+Executing the application. Replace *auxiliary device name* by the corresponding created SFs. 
+
+./doca_flow_hairpin_vnf -a auxiliary:mlx5_core.sf.4,dv_flow_en=2 -a auxiliary:mlx5_core.sf.5,dv_flow_en=2 -- -l 60
 
