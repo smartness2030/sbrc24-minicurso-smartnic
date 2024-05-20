@@ -1,0 +1,10 @@
+services:
+  pktgen-dpdk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pktgen-dpdk:24.03.1
+    network_mode: host
+    privileged: true
+    volumes:
+      - /dev/hugepages:/dev/hugepages

@@ -1,0 +1,5 @@
+services:
+  vpp:
+    image: ligato/vpp-base:24.02
+    network_mode: host
+    privileged: true
