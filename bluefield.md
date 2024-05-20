@@ -24,4 +24,24 @@ If everything goes smoothly, you will be logged into the SmartNIC operating syst
 SFs are used by DOCA applications and communicate with the physical port by SF representators. It is possible to dynamically add, remove, or modify SFs according to the application's needs using the *mlxdevm port* command.  Next, we can use the *mlxdevm port show* command to list all registered SFs and their features. For instance, we can see the SF identifier (e.g., 229408) and to which physical port each SF is attached. For example, the SF *pci/0000:03:00.0/229408* is attached to physical port 0.
 
 ### Creating Scalable Functions
-Next, we will create, configure and deploy two Scalable Functions. 
+
+Next, we will create, configure and deploy two Scalable Functions. SFs need to be created, configured, and deployed. 
+
+To create a new SF, we need to attach it to a physical port (either pci/0000:03:00.0 or pci/0000:03:00.1). Then, we should defined an id to SF (sfnum). 
+
+/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.0 flavour pcisf pfnum 0 sfnum 1
+/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.1 flavour pcisf pfnum 1 sfnum 1
+/opt/mellanox/iproute2/sbin/mlxdevm port show
+
+
+#configure sf
+/opt/mellanox/iproute2/sbin/mlxdevm port function set pci/0000:03:00.1/294945 hw_addr 00:00:00:00:00:01 trust on state active
+/opt/mellanox/iproute2/sbin/mlxdevm port function set pci/0000:03:00.0/229409 hw_addr 00:00:00:00:00:02 trust on state active
+
+#deploy sf
+#ls /sys/bus/auxiliary/devices/mlx5_core.sf.*
+echo mlx5_core.sf.4  > /sys/bus/auxiliary/drivers/mlx5_core.sf_cfg/unbind
+echo mlx5_core.sf.4  > /sys/bus/auxiliary/drivers/mlx5_core.sf/bind
+echo mlx5_core.sf.5  > /sys/bus/auxiliary/drivers/mlx5_core.sf_cfg/unbind
+echo mlx5_core.sf.5  > /sys/bus/auxiliary/drivers/mlx5_core.sf/bind
+
