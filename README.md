@@ -4,4 +4,4 @@ This tutorial is part of the short course on SmartNICs presented at SBRC 2024. W
 
 1. NVIDIA BlueField 2 [(tutorial link)](bluefield.md)
 2. Netronome NFP
-3. Mellanox ConnectX 
+3. Mellanox ConnectX [(tutorial link)](/connectx/READ.md)
