@@ -1,3 +1,11 @@
+#This script is executed in case we want to "reset" our env. 
+
+#allocating hugepages
+umount /dev/hugepages
+mkdir -p /mnt/huge
+mount -t hugetlbfs nodev /mnt/huge
+echo 4096 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+
 #deleting bridges
 ovs-vsctl del-br ovsbr1
 ovs-vsctl del-br ovsbr2
