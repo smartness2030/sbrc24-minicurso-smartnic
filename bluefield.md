@@ -27,16 +27,19 @@ SFs are used by DOCA applications and communicate with the physical port by SF r
 
 Next, we will create, configure and deploy two Scalable Functions. SFs need to be created, configured, and deployed. 
 
-To create a new SF, we need to attach it to a physical port (either pci/0000:03:00.0 or pci/0000:03:00.1). Then, we should defined an id to SF (sfnum). 
+To create a new SF, we need to attach it to a physical port (either pci/0000:03:00.0 or pci/0000:03:00.1). Then, we should defined an id to SF (sfnum) -- in the example below, we set sfnum to 10. **IMPORTANT**: please ensure to select a different sfnum than other atendees (we are using the same BlueField card here)
 
-`/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.0 flavour pcisf pfnum 0 sfnum 1`
-`/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.1 flavour pcisf pfnum 1 sfnum 1`
+`/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.0 flavour pcisf pfnum 0 sfnum 10`
+`/opt/mellanox/iproute2/sbin/mlxdevm port add pci/0000:03:00.1 flavour pcisf pfnum 1 sfnum 10`
 `/opt/mellanox/iproute2/sbin/mlxdevm port show` 
 
+At this point, running the coomand below, you should see the new added SFs. A SF has netdev representator en3f1pf1sf10 and en3f0pf0sf10.  
 
-#configure sf
-/opt/mellanox/iproute2/sbin/mlxdevm port function set pci/0000:03:00.1/294945 hw_addr 00:00:00:00:00:01 trust on state active
-/opt/mellanox/iproute2/sbin/mlxdevm port function set pci/0000:03:00.0/229409 hw_addr 00:00:00:00:00:02 trust on state active
+To configure SFs, we run the following command. Note that we need to specify the SF refenrece id (something like pci/0000:03:00.1/294945). To get it, analyze the output of command (mlxdevm port show). 
+
+`/opt/mellanox/iproute2/sbin/mlxdevm port function set pci/0000:03:00.1/294945 hw_addr 00:00:00:00:00:01 trust on state active`
+
+`/opt/mellanox/iproute2/sbin/mlxdevm port function set pci/0000:03:00.0/229409 hw_addr 00:00:00:00:00:02 trust on state active`
 
 #deploy sf
 #ls /sys/bus/auxiliary/devices/mlx5_core.sf.*
