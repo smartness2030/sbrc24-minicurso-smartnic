@@ -1,78 +1,167 @@
-# P4 Programming Tutorial on Netronome SmartNICs
-This tutorial provides a basic introduction to P4 (Programming Protocol-independent Packet Processors) programming on Netronome SmartNICs. Here you will find all the steps for installing and setting up the development environment, as well as presenting, implementing, and running a simple P4 program on a Netronome SmartNIC.
+# agilio-p4
 
-The tutorial is designed in a simple and straightforward manner, aiming to abstract away the common complexities found in hardware programming. The goal is to provide a quick learning curve by covering only the essential topics up to the implementation of the first program.
 
-# Prerequisites
-- Advanced knowledge of computer networks.
-- Familiarity with Linux and command line.
-- Basic understanding of the P4 language.
--Access to a Netronome SmartNIC (in this tutorial, we will use the Netronome Agilio CX 2x10Gb).
+## P4 language and Netronome SmartNICs
+This repository shows how to use the P4 language (https://p4.org) on Netronome SmartNICs (https://www.netronome.com/). 
+Through the Linux OS, the Agilio P4C SDK allows to use the SmartNICs for packet processing and forwarding, using P4 programs.
+Currently, Agilio P4C SDK supports P4-14 version 1.0 (1.1 stills experimental, according to the Netronome) and P4-16 on Preview release.
+Please refer to [Netronome Documentation](https://github.com/guimvmatos/Agilio-P4-SmartNIC/blob/main/Gerenal_Docs/nfp-sdk-rn-6.1.0.1-preview-3286.pdf) for terminology and more detailed information about the SmartNICs.
 
-# Installation and Environment Setup
-To install the necessary drivers and modules and configure the environment, follow the instructions below, as root:
 
-`cd ~'`
-`git clone git clone https://github.com/guimvmatos/SBRC24NetronomeTutorial.git`
+## Requirements
+1. [Netronome SmartNIC](https://help.netronome.com/support/solutions/articles/36000073257-agilio-smartnics-hardware-user-manuals) (obviously!).
+2. Hardware support for SR-IOV (and enabled on BIOS).
+3. Ubuntu (>= 16.04) or CentOS (>= 7) Linux OS.
+4. Linux Kernel version 4.10 or newer.
+5. (Optional) Windows 7 or newer (for graphical IDE).
+6. Agilio P4C SDK from Netronome Support website. Agilio SDK comprises Programmer Studio IDE for Microsoft® Windows (ide), Run Time Environment (rte) and Hosted Toolchain (toolchain).
 
-- Access the Agilio-P4-SmartNIC directory.
-- Follow the presented tutorial to install the required drivers and modules.
 
-By following these steps, you will be ready to start developing and running your P4 programs on Netronome SmartNIC. In the instalation directory you'll find a lot of netronome related documents, that can be usefull in case of you want do deep into this technology.
+## Install instructions
+1. Insert the SmartNIC into server PCI-X slot (x8 or greater). This procedure is very important for step 3!
 
-## Details about Netronome architecture
-
-The Netronome SmartNIC uses single-root input/output virtualization (SRIOV), which enables virtual functions (VFs) to be created from a physical function (PF). The VFs thus share the resources of a PF, while VFs remain isolated from each other. The isolated VFs are typically assigned to virtual machines (VMs) on the host. In this way, the VFs allow the VMs to directly access the PCI device, thereby bypassing the host kernel. In this tutorial, we have two physical (p0, p1) and four virtual interfaces (Vf0\_1 to Vf0\_5). We will work with a P4 program that implements simple IPv6 forwarding, which can be found at IPv6Forwarding.
-
-# Deployment
-
-Here we'll show how to deploy, configure, and debug your programs on Netronome SmartNICs. We are taking into consideration that you already clone this repository and that your environment is already installed and configured.
-
-Once you already have your Netronome installed and configured on your machine, you need to locate the src/p4-16 folder, inside the Agilio-P4-SmartNIC directory (probably in `/root/SBRC24NetronomeTutorial/Agilio-P4-SmartNIC/src`). This folder contains all the programs that you can run on your Netronome SmartNIC. You may even find different programs from the one we are going to test. To get started, make sure you are inside the p4-16 folder, and then create a folder called SimpleIPv6. After that, copy the contents of the IPv6Forwarding folder into the folder you just created:
-```
-cd /root/SBRC24NetronomeTutorial/Agilio-P4-SmartNIC/src
-mkdir SimpleIPv6
-cd SimpleIPv6/
-cp ../../../IPv6Forwarding/ipv6_forward.p4 ./
-cp ../../../IPv6Forwarding/user_config.json ./
+2. Install the **Run Time Environment (RTE)** software on the Linux OS server:
+```diff
+- WARNING!!!
+- During the installation, the RTE software will try to update NFP Board Support Package.
+- Don't interrupt this procedure, this may cause a permanent damage to SmartNIC!
 ```
 
-For P4 programming using Netronome, these two files are all that is needed. The ipv6_forwarding.p4 file represents our program itself. And the user_config.json is the file that will populate the control plane tables. As this tutorial is for those who are already familiar with the P4 programming language, we will not go into details. However, a very common issue for those who are starting to program using Netronome SmartNICs is how to perform interface assignment in the data plane table. For example, looking at the P4 code, we can find the following action:
-
-```action ipv6_forward (macAddr_t dstAddr, egressSpec_t port) {
-        standard_metadata.egress_spec = port;
-        hdr.ethernet.dstAddr = dstAddr;
+```bash
+$ $ cd Agilio-P4-SmartNIC/install/
+$ tar xzf nfp-sdk-p4-rte-6.1.0.1-preview-3214.ubuntu.x86_64.tgz
+$ cd nfp-sdk-6-rte-v6.1.0.1-preview-Ubuntu-Release-r2750-2018-10-10-ubuntu.binary/
+$ sudo ./sdk6_rte_install.sh install
 ```
 
-Esta ação receberá uma porta com parametro, que será a porta de saída do pacote em questão. Quando estamos trabalhando com smartnics Netronome, temos as interfaces físicas e as virtuais. You can configure this setting by editing the following file: `/lib/systemd/system/nfp-sdk6-rte.service`. locate and change the following line.
-
-This action will receive a port as a parameter, which will be the output port of the packet. When we are working with Netronome SmartNICs, we have physical and virtual interfaces. You can configure this setting by editing the following file: `/lib/systemd/system/nfp-sdk6-rte.service`. Locate and change the following line.
-
-`Environment=NUM_VFS=4`
-
-With this configuration, you will have 4 virtual interfaces, called VFs. And they can be instantiated in the control plane tables as "v0.0", "v0.1", "v0.2", and "v0.3". If you want to use the physical interfaces, you should refer to them as "p0" and "p1".
-
-In the user_config.json file, we can find examples of how to populate the control plane tables using the aforementioned nomenclature.
-
-Now that we have copied the two necessary files, we should call the compiler passing the P4 file as a parameter to create firmware. Then, we will deploy the firmware to the board, and finally, we will populate the control plane tables. To do this, execute the following commands:
-
+>**NOTE:** When installing a new SmartNIC after the initial RTE installation, the installation script should be executed with these parameter:
+```bash
+$ sudo ./sdk6_rte_install.sh install_force_bsp
 ```
-sudo /opt/netronome/p4/bin/./nfp4build --nfp4c_p4_version 16 --no-debug-info -p out -o firmware.nffw -l lithium -4 ipv6_forward.p4
-sudo /opt/netronome/p4/bin/./rtecli design-load -f firmware.nffw -p out/pif_design.json
-sudo /opt/netronome/p4/bin/rtecli config-reload -c user_config.json
+>To ensure the NFP BSP related firmware on the SmartNIC is up to date. This can also be done using NFP BSP tools. Please refer to NFP BSP documentation for more information.
+
+
+3. Install the **toolchain** on Linux OS:
+
+3.1. Ubuntu:
+```bash
+$ cd ..
+$ sudo dpkg -i nfp-sdk_6.1.0.1-preview-3243-2_amd64.deb
 ```
 
-To debug, you can look at the logs in /var/log/nfp-sdk6-rte.log. Here you will find all errors related to the service, deployment, and usage. In other words, if you encounter issues with initializing the service or deploying the program, you can find the logs and better understand what is happening.
-
-Note: after creating the firmware, you will notice that many files have been generated. Don't worry, this is normal.
-
-About the control plane configuration, if you want, you can check the configured rules.
-```
-sudo /opt/netronome/p4/bin/./rtecli tables -i 0 list-rules
+3.2. CentOS:
+```bash
+$ cd ~/agilio-p4/agilio-sdk/toolchain
+$ sudo rpm -i nfp-sdk-*.x86_64.rpm
 ```
 
-Now your board is properly configured with a simple code that will forward data from one virtual port to another using IPv6. You can use the Python scripts send_pkt.py and receive.py, where the first one will send a packet from interface v0.0 to interface v0.3. And the second one will capture the packet on the destination interface.
+4. Reboot the machine.
 
-To run the test programs, open more two shells, navigate `/root/SBRC24NetronomeTutorial/IPv6Forwarding` directory, and in the first shell, run the command `python3 receive.py`. The program will execute and wait for any packet received on interface v0.3. After that, in the second terminal, run `python3 send_pkt.py`. Following this, a packet will be sent on interface v0.0 destined for v0.3. The execution of these Python programs depends on the configuration of each computer and the version of Python.
+5. (*Optional*) Install the Programmer Studio IDE on a Windows desktop or Linux desktop computer using Wine.
 
-If the execution of the programs was successful, congratulations! You have completed this tutorial, and the program is ready for the next step. If you are interested in delving deeper and performing more advanced functions, perhaps [this repository](https://github.com/guimvmatos/P4-INCA) will interest you. There, you will also find a tutorial for deploying a more advanced program, using SRv6 to connect traffic from multiple virtual machines. Feel free to explore and give it a try.
+
+## Usage
+
+## Disable netdev
+Before load the SmartNIC module on Linux Server, check if the required parameters has specified on blacklist file of modprobe.d directory (/etc/modprobe.d/blacklist-netronome.conf). If not, create the file with this content bellow:
+```
+blacklist nfp_netvf
+# Disable netdev mode; implies cpp mode is enabled
+options nfp nfp_pf_netdev=0
+```
+If this file does not exists, create then and, after this, run the follow command in order to update initramfs:
+```bash
+$ sudo update-initramfs -u
+```
+Updating initramfs causes the system to start using the new configuration adjusted in modprobe.d.
+
+After this procedure, the SmartNIC goes hidden on system, with no interfaces when doing a *ifconfig* like command. This is normal, because the interfaces comes up to the system via SR-IOV when a new firmware has uploaded into SmartNIC. The instructions to compile and upload a new firmware using toolchain will be explainded on section **Building and Uploading a New P4 Program**.
+
+
+## Option 1: Starting RTE Daemon in Normal Mode (non-debug)
+This mode is intended to use the SDK in command line only. Thus, the **Programmer Studio IDE does not work in normal mode**. Please see the next topic for debug mode reference.
+
+For first time boot (Linux server with SmartNICS), the Netronome Run Time Environment daemon should be enabled and started, using the follow command line:
+```bash
+$ sudo systemctl enable nfp-sdk6-rte
+$ sudo systemctl start nfp-sdk6-rte
+```
+
+Then, check the daemon status:
+```bash
+$ sudo systemctl status nfp-sdk6-rte
+```
+
+If some trouble occur, the daemon does not start. Check the log file (/var/log/nfp-sdk6-rte.log) for errors.
+The most common error that can occur is: *Incompatible firmware detected, use 'nfp-nffw unload -n 0 ' to unload firmware*.
+In this case, execute the nfp-nffw utility, as mentioned above, to unload defective firmware from SmartNIC.
+
+Try to start daemon again, and then check the status of it.
+
+
+## Option 2: Starting RTE Daemon in Debug Mode
+If you are planning to use the Programmer Studio IDE, it is necessary to enable and start the RTE on "debug mode", in order to connect the IDE desktop to SmartNIC installed into Linux server.
+However, to use RTE daemon in debug mode, **normal mode RTE daemon should be stopped**. This procedure is detailed below:
+
+To disable and stop RTE Daemon in normal mode:
+```bash
+$ sudo systemctl disable nfp-sdk6-rte
+$ sudo systemctl stop nfp-sdk6-rte
+```
+
+To enable and start RTE Daemon in debug mode:
+```bash
+$ sudo systemctl enable nfp-sdk6-rte-debug
+$ sudo systemctl enable nfp-hwdbg-srv
+$ sudo systemctl start nfp-sdk6-rte-debug
+$ sudo systemctl start nfp-hwdbg-srv
+```
+
+Then, check the daemon status:
+```bash
+$ sudo systemctl status nfp-sdk6-rte-debug
+$ sudo systemctl status nfp-hwdbg-srv
+```
+
+If some trouble occur, the daemon does not start. Check the log file (/var/log/nfp-sdk6-rte.log) for errors.
+The most common error that can occur is: *Incompatible firmware detected, use 'nfp-nffw unload -n 0 ' to unload firmware*.
+In this case, execute the nfp-nffw utility, as mentioned above, to unload defective firmware from SmartNIC.
+
+Try to start daemon again, and then check the status.
+
+
+## Building and Uploading the First P4 Program
+
+Create a new P4 source file, using any suitable text editor (i.e. source_code.p4). To build a P4-16 program from source file: (if nfp4build was not found, try cd /opt/netronome/p4/bin)
+```bash
+$ nfp4build --nfp4c_p4_version 16 --no-debug-info -p out -o firmware.nffw -l lithium -4 source_code.p4
+```
+
+Where:  
+   `--nfp4c_p4_version`: P4 language version (in this case, P4-16)  
+   `--no-debug-info`: does not include debug info into new firmware (the size of the code is reduced by a half with this option)  
+   `-p out`: create and put all intermediate source files into a **out** directory  
+   `-o firmware.nffw`: new firmware file that will be build  
+   `-l lithium`: Name of the platform to build against (to find specific platform, use the command: *nfp-hwinfo| grep assembly.model*)  
+   `-4 source_code.p4`: P4 source file  
+
+
+To upload the firmware to the SmartNIC, simply run the follow command: (if rtecli was not found, try cd /opt/netronome/p4/bin)
+```bash
+$ rtecli design-load -f firmware.nffw -p out/pif_design.json
+```
+
+Where:  
+   `-f firmware.nffw`: Firmware file generated with nfp4build utility  
+   `-p out/pif_design.json`: Json file generated on the build stage (intermediate files)  
+
+
+To install or update the user configuration rules onto the NFP, use the next command:
+```bash
+$ rtecli config-reload -c user_config.json
+```
+
+Where:  
+   `-c user_config.json`: is a json containing a set of rules and tables that will be loaded into P4 tables  
+
+There have some examples of P4 code in this github, please referer to **src** folder to find out then.
