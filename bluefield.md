@@ -70,9 +70,11 @@ To verify, run:
 In addition to that, we need to add flow entries to OVS (or to the eSwitch in the BlueField) so that packets can move between interfaces and SFs.
 
 `ovs-ofctl add-flow ovsbr1 in_port=p0,actions=output:en3f1pf1sf10`
+
 `ovs-ofctl add-flow ovsbr1 in_port=en3f1pf1sf10,actions=output:p0`
 
 `ovs-ofctl add-flow ovsbr1 in_port=p1,actions=output:en3f1pf1sf0`
+
 `ovs-ofctl add-flow ovsbr1 in_port=en3f1pf1sf0,actions=output:p1`
 
 To verify flow entries:
