@@ -11,7 +11,7 @@ We set a server having a Nvidia BlueField-2 to our activitiy. First we need to a
 
 - Everything needs to be executed as `root`
 
-## Step 1: Understanding how network  Configuring Scalable Functions
+## Step 1: Understanding how BlueField steer network traffic
 
 - **Goal 1:** understand how physical ports and virtual ports are interconnected in the BlueField
 - **Goal 2:** add and configure virtual ports (SFs) in the BlueField
@@ -22,5 +22,6 @@ If everything goes smoothly, you will be logged into the SmartNIC operating syst
 - Show existing Scalable Functions in the system: execute `/opt/mellanox/iproute2/sbin/mlxdevm port show` 
 
 SFs are used by DOCA applications and communicate with the physical port by SF representators. It is possible to dynamically add, remove, or modify SFs according to the application's needs using the *mlxdevm port* command.  Next, we can use the *mlxdevm port show* command to list all registered SFs and their features. For instance, we can see the SF identifier (e.g., 229408) and to which physical port each SF is attached. For example, the SF *pci/0000:03:00.0/229408* is attached to physical port 0.
-  
 
+### Creating Scalable Functions
+Next, we will create, configure and deploy two Scalable Functions. 
