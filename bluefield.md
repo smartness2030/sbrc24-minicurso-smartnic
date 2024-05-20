@@ -93,6 +93,9 @@ To verify flow entries:
 - Set up IP in for interfaces in the Traffic Generator (enp7s0f0 and enp7s0f1). For instance: enp7s0f0 40.40.40.2/24
 - Set up an IP to SFs in the same subnet and ping them from the traffic generator. **Important:** set up ip to the SF netdev representator (`mlnx-sf -a show`)
  
+- At this point, ping should work. To see packets, run:
+`ovs-ofctl dump-flows ovsbr1`
+`ovs-ofctl dump-flows ovsbr2`
 
 
 
