@@ -75,9 +75,9 @@ In addition to that, we need to add flow entries to OVS (or to the eSwitch in th
 
 `ovs-ofctl add-flow ovsbr1 in_port=en3f0pf0sf10,actions=output:p0`
 
-`ovs-ofctl add-flow ovsbr1 in_port=p1,actions=output:en3f1pf1sf10`
+`ovs-ofctl add-flow ovsbr2 in_port=p1,actions=output:en3f1pf1sf10`
 
-`ovs-ofctl add-flow ovsbr1 in_port=en3f1pf1sf10,actions=output:p1`
+`ovs-ofctl add-flow ovsbr2 in_port=en3f1pf1sf10,actions=output:p1`
 
 To verify flow entries:
 
