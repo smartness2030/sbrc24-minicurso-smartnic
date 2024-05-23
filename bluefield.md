@@ -37,7 +37,7 @@ To create a new SF, we need to attach it to a physical port (either pci/0000:03:
 
 At this point, running the coomand below, you should see the new added SFs. A SF has netdev representator en3f1pf1sf10 and en3f0pf0sf10.  
 
-To configure SFs, we run the following command. Note that we need to specify the SF refenrece id (something like pci/0000:03:00.1/294945). To get it, analyze the output of command (mlxdevm port show). 
+To configure SFs, we run the following command. Note that we need to specify the SF refenrece id (something like pci/0000:03:00.1/294945). To get it, analyze the output of command (mlxdevm port show).  IMPORTANT: please ensure to set a different MAC address)
 
 `/opt/mellanox/iproute2/sbin/mlxdevm port function set pci/0000:03:00.1/294945 hw_addr 00:00:00:00:00:01 trust on state active`
 
